@@ -50,7 +50,6 @@ public:
 
     // Load data from host memory
     void load(const void *src);
-
     // Challenging features
     tensor_t contiguous() const;
     tensor_t reshape(const std::vector<size_t> &shape) const;
