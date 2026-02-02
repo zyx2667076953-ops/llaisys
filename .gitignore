@@ -88,3 +88,11 @@ htmlcov/
 Thumbs.db
 ehthumbs.db
 desktop.ini
+
+# Model files (large files)
+models/
+*.safetensors
+
+# pip installer
+get-pip.py
+pip/
