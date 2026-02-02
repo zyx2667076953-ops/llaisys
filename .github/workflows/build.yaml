@@ -27,13 +27,25 @@ jobs:
     
     - name: Xmake Build & Install
       run: | 
-        xmake
-        xmake install
+        xmake -v
+        xmake install -v
     
-    - name: Install Python
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+    
+    - name: Install Python dependencies
+      run: | 
+        python -m pip install --upgrade pip
+        pip install torch --index-url https://download.pytorch.org/whl/cpu
+        pip install transformers accelerate
+    
+    - name: Install Python package
       run: | 
         cd python
-        pip install .
+        pip install -e .
         cd ..
 
     - name: Assignment-0
