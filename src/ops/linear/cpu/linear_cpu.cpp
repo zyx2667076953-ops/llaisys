@@ -7,10 +7,10 @@ namespace llaisys::ops::cpu {
 template <typename T>
 void linear_impl(T* out, const T* in, const T* weight, const T* bias,
                  size_t batch, size_t in_features, size_t out_features) {
-    int64_t n = static_cast<int64_t>(batch * out_features);
+    int64_t total = static_cast<int64_t>(batch * out_features);
     
     #pragma omp parallel for schedule(static)
-    for (int64_t idx = 0; idx < n; ++idx) {
+    for (int64_t idx = 0; idx < total; ++idx) {
         size_t i = idx / out_features;
         size_t j = idx % out_features;
         

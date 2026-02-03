@@ -10,7 +10,7 @@ template <typename T>
 void self_attention_impl(T* out, const T* q, const T* k, const T* v,
                         size_t seqlen, size_t total_len, size_t nhead, size_t nkvhead, 
                         size_t d, size_t dv, float scale) {
-    size_t gsize = nhead / nkvhead;  // group size for GQA
+    size_t gsize = nhead / nkvhead;
     int64_t n = static_cast<int64_t>(nhead * seqlen);
     
     #pragma omp parallel for schedule(dynamic)
