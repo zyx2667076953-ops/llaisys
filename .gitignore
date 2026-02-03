@@ -89,8 +89,8 @@ Thumbs.db
 ehthumbs.db
 desktop.ini
 
-# Model files (large files)
-models/
+# Model files (large files, root directory only)
+/models/
 *.safetensors
 
 # pip installer

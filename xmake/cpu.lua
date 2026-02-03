@@ -1,8 +1,11 @@
 target("llaisys-device-cpu")
     set_kind("static")
     set_languages("cxx17")
-    set_warnings("all", "error")
-    if not is_plat("windows") then
+    if is_plat("windows") then
+        set_warnings("all")
+        add_cxflags("/wd4819", "/wd4996", "/wd4267", "/wd4244")
+    else
+        set_warnings("all", "error")
         add_cxflags("-fPIC", "-Wno-unknown-pragmas")
     end
 
@@ -15,13 +18,13 @@ target("llaisys-ops-cpu")
     set_kind("static")
     add_deps("llaisys-tensor")
     set_languages("cxx17")
-    set_warnings("all", "error")
-    if not is_plat("windows") then
+    if is_plat("windows") then
+        set_warnings("all")
+        add_cxflags("/wd4819", "/wd4996", "/wd4267", "/wd4244", "/openmp")
+    else
+        set_warnings("all", "error")
         add_cxflags("-fPIC", "-Wno-unknown-pragmas", "-fopenmp")
         add_ldflags("-fopenmp")
-    else
-        -- Windows MSVC: 显式启用 OpenMP
-        add_cxflags("/openmp")
     end
 
     add_files("../src/ops/*/cpu/*.cpp")

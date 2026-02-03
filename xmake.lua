@@ -22,8 +22,11 @@ target("llaisys-utils")
     set_kind("static")
 
     set_languages("cxx17")
-    set_warnings("all", "error")
-    if not is_plat("windows") then
+    if is_plat("windows") then
+        set_warnings("all")
+        add_cxflags("/wd4819", "/wd4996", "/wd4267", "/wd4244")  -- 禁用常见的无害警告
+    else
+        set_warnings("all", "error")
         add_cxflags("-fPIC", "-Wno-unknown-pragmas")
     end
 
@@ -39,8 +42,11 @@ target("llaisys-device")
     add_deps("llaisys-device-cpu")
 
     set_languages("cxx17")
-    set_warnings("all", "error")
-    if not is_plat("windows") then
+    if is_plat("windows") then
+        set_warnings("all")
+        add_cxflags("/wd4819", "/wd4996", "/wd4267", "/wd4244")
+    else
+        set_warnings("all", "error")
         add_cxflags("-fPIC", "-Wno-unknown-pragmas")
     end
 
@@ -55,8 +61,11 @@ target("llaisys-core")
     add_deps("llaisys-device")
 
     set_languages("cxx17")
-    set_warnings("all", "error")
-    if not is_plat("windows") then
+    if is_plat("windows") then
+        set_warnings("all")
+        add_cxflags("/wd4819", "/wd4996", "/wd4267", "/wd4244")
+    else
+        set_warnings("all", "error")
         add_cxflags("-fPIC", "-Wno-unknown-pragmas")
     end
 
@@ -70,8 +79,11 @@ target("llaisys-tensor")
     add_deps("llaisys-core")
 
     set_languages("cxx17")
-    set_warnings("all", "error")
-    if not is_plat("windows") then
+    if is_plat("windows") then
+        set_warnings("all")
+        add_cxflags("/wd4819", "/wd4996", "/wd4267", "/wd4244")
+    else
+        set_warnings("all", "error")
         add_cxflags("-fPIC", "-Wno-unknown-pragmas")
     end
 
@@ -85,8 +97,11 @@ target("llaisys-ops")
     add_deps("llaisys-ops-cpu")
 
     set_languages("cxx17")
-    set_warnings("all", "error")
-    if not is_plat("windows") then
+    if is_plat("windows") then
+        set_warnings("all")
+        add_cxflags("/wd4819", "/wd4996", "/wd4267", "/wd4244")
+    else
+        set_warnings("all", "error")
         add_cxflags("-fPIC", "-Wno-unknown-pragmas")
     end
     
@@ -101,8 +116,11 @@ target("llaisys-models")
     add_deps("llaisys-ops")
 
     set_languages("cxx17")
-    set_warnings("all", "error")
-    if not is_plat("windows") then
+    if is_plat("windows") then
+        set_warnings("all")
+        add_cxflags("/wd4819", "/wd4996", "/wd4267", "/wd4244")
+    else
+        set_warnings("all", "error")
         add_cxflags("-fPIC", "-Wno-unknown-pragmas")
     end
     
@@ -122,7 +140,12 @@ target("llaisys")
     add_deps("llaisys-models")
 
     set_languages("cxx17")
-    set_warnings("all", "error")
+    if is_plat("windows") then
+        set_warnings("all")
+        add_cxflags("/wd4819", "/wd4996", "/wd4267", "/wd4244")
+    else
+        set_warnings("all", "error")
+    end
     add_files("src/llaisys/*.cc")
     set_installdir(".")
 

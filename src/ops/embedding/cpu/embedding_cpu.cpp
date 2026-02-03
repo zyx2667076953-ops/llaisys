@@ -8,8 +8,9 @@ namespace llaisys::ops::cpu {
 template <typename T>
 void embedding_impl(T* out, const int64_t* index, const T* weight, size_t num_indices, size_t weight_dim) {
     // 并行化索引查找
+    // 使用 int64_t 作为循环变量，因为 MSVC OpenMP 要求有符号整数类型
     #pragma omp parallel for schedule(static)
-    for (size_t i = 0; i < num_indices; ++i) {
+    for (int64_t i = 0; i < static_cast<int64_t>(num_indices); ++i) {
         int64_t idx = index[i];
         std::memcpy(out + i * weight_dim, weight + idx * weight_dim, weight_dim * sizeof(T));
     }

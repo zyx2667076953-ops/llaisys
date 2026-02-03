@@ -107,7 +107,8 @@ tensor_t Qwen2Model::transformer_layer(tensor_t hidden, size_t layer_idx, tensor
     auto& layer_cache = kv_cache_->get_layer(layer_idx);
     auto full_k = layer_cache.update_k(k_rope);
     auto full_v = layer_cache.update_v(v);
-    size_t total_len = layer_cache.current_len;
+    // total_len 目前未使用，但保留以备将来 causal mask 使用
+    (void)layer_cache.current_len;
     
     // 6. Self-Attention
     float scale = 1.0f / std::sqrt(static_cast<float>(dh));
