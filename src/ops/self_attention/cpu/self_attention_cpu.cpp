@@ -93,7 +93,6 @@ void self_attention_impl(T* attn_val, const T* q, const T* k, const T* v,
             }
             
             delete[] scores;
-        }
     }
 }
 

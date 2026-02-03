@@ -50,7 +50,6 @@ void linear_impl_optimized(T* out, const T* in, const T* weight, const T* bias,
                 sum += llaisys::utils::cast<float>(bias[j]);
             }
             out[i * out_features + j] = llaisys::utils::cast<T>(sum);
-        }
     }
 }
 
