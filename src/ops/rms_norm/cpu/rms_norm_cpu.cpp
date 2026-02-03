@@ -8,8 +8,9 @@ namespace llaisys::ops::cpu {
 template <typename T>
 void rms_norm_impl(T* out, const T* in, const T* weight, size_t num_rows, size_t dim, float eps) {
     // 并行化行维度
+    // 使用 int64_t 作为循环变量，因为 MSVC OpenMP 要求有符号整数类型
     #pragma omp parallel for schedule(static)
-    for (size_t i = 0; i < num_rows; ++i) {
+    for (int64_t i = 0; i < static_cast<int64_t>(num_rows); ++i) {
         const T* in_row = in + i * dim;
         T* out_row = out + i * dim;
         

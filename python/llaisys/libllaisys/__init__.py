@@ -19,10 +19,23 @@ def load_shared_library():
 
     if sys.platform.startswith("linux"):
         libname = "libllaisys.so"
+        # Pre-load OpenMP library on Linux to resolve runtime dependencies
+        try:
+            ctypes.CDLL("libgomp.so.1", mode=ctypes.RTLD_GLOBAL)
+        except OSError:
+            try:
+                ctypes.CDLL("libomp.so", mode=ctypes.RTLD_GLOBAL)
+            except OSError:
+                pass  # Continue anyway, library might have been statically linked
     elif sys.platform == "win32":
         libname = "llaisys.dll"
     elif sys.platform == "darwin":
         libname = "llaisys.dylib"
+        # Pre-load OpenMP library on macOS
+        try:
+            ctypes.CDLL("libomp.dylib", mode=ctypes.RTLD_GLOBAL)
+        except OSError:
+            pass  # Continue anyway
     else:
         raise RuntimeError("Unsupported platform")
 

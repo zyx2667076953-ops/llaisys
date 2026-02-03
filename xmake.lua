@@ -142,9 +142,11 @@ target("llaisys")
     set_languages("cxx17")
     if is_plat("windows") then
         set_warnings("all")
-        add_cxflags("/wd4819", "/wd4996", "/wd4267", "/wd4244")
+        add_cxflags("/wd4819", "/wd4996", "/wd4267", "/wd4244", "/openmp")
+        add_ldflags("/openmp")
     else
         set_warnings("all", "error")
+        add_ldflags("-fopenmp")
     end
     add_files("src/llaisys/*.cc")
     set_installdir(".")

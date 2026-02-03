@@ -13,10 +13,14 @@ void self_attention_impl(T* attn_val, const T* q, const T* k, const T* v,
     size_t head_group_size = nhead / nkvhead;
 
     // 并行化 head 和 seqlen 两个维度
-    #pragma omp parallel for collapse(2) schedule(dynamic)
-    for (size_t h = 0; h < nhead; ++h) {
-        for (size_t i = 0; i < seqlen; ++i) {
-            size_t kv_h = h / head_group_size;
+    // 使用 int64_t 作为循环变量，因为 MSVC OpenMP 要求有符号整数类型
+    // MSVC OpenMP 2.0 不完全支持 collapse，改为并行化合并后的迭代空间
+    int64_t total_iterations = static_cast<int64_t>(nhead * seqlen);
+    #pragma omp parallel for schedule(dynamic)
+    for (int64_t idx = 0; idx < total_iterations; ++idx) {
+        int64_t h = idx / static_cast<int64_t>(seqlen);
+        int64_t i = idx % static_cast<int64_t>(seqlen);
+        size_t kv_h = h / head_group_size;
             
             // 使用栈分配替代 vector，减少动态内存分配开销
             float* scores = new float[total_len];

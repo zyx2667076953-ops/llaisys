@@ -9,9 +9,13 @@ template <typename T>
 void linear_impl(T* out, const T* in, const T* weight, const T* bias,
                  size_t batch, size_t in_features, size_t out_features) {
     // 并行化外层循环（batch 和 out_features）
-    #pragma omp parallel for collapse(2) schedule(static)
-    for (size_t i = 0; i < batch; ++i) {
-        for (size_t j = 0; j < out_features; ++j) {
+    // 使用 int64_t 作为循环变量，因为 MSVC OpenMP 要求有符号整数类型
+    // MSVC OpenMP 2.0 不完全支持 collapse，改为并行化合并后的迭代空间
+    int64_t total_iterations = static_cast<int64_t>(batch * out_features);
+    #pragma omp parallel for schedule(static)
+    for (int64_t idx = 0; idx < total_iterations; ++idx) {
+        int64_t i = idx / static_cast<int64_t>(out_features);
+        int64_t j = idx % static_cast<int64_t>(out_features);
             float sum = 0.0f;
             
             // 指针优化，减少地址计算

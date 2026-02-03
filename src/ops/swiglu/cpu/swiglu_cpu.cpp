@@ -8,8 +8,9 @@ namespace llaisys::ops::cpu {
 template <typename T>
 void swiglu_impl(T* out, const T* gate, const T* up, size_t numel) {
     // 并行化计算
+    // 使用 int64_t 作为循环变量，因为 MSVC OpenMP 要求有符号整数类型
     #pragma omp parallel for schedule(static)
-    for (size_t i = 0; i < numel; ++i) {
+    for (int64_t i = 0; i < static_cast<int64_t>(numel); ++i) {
         float g = llaisys::utils::cast<float>(gate[i]);
         float u = llaisys::utils::cast<float>(up[i]);
         
