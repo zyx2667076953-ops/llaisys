@@ -4,30 +4,31 @@
 
 namespace llaisys::ops::cpu {
 
-// 优化版本：OpenMP 并行（每个索引的查找是独立的）
 template <typename T>
-void embedding_impl(T* out, const int64_t* index, const T* weight, size_t num_indices, size_t weight_dim) {
-    // 并行化索引查找
-    // 使用 int64_t 作为循环变量，因为 MSVC OpenMP 要求有符号整数类型
+void embedding_impl(T* out, const int64_t* idx, const T* weight, size_t n, size_t dim) {
     #pragma omp parallel for schedule(static)
-    for (int64_t i = 0; i < static_cast<int64_t>(num_indices); ++i) {
-        int64_t idx = index[i];
-        std::memcpy(out + i * weight_dim, weight + idx * weight_dim, weight_dim * sizeof(T));
+    for (int64_t i = 0; i < static_cast<int64_t>(n); ++i) {
+        int64_t row = idx[i];
+        std::memcpy(out + i * dim, weight + row * dim, dim * sizeof(T));
     }
 }
 
-void embedding(std::byte* out, const std::byte* index, const std::byte* weight, llaisysDataType_t dtype, size_t num_indices, size_t weight_dim) {
-    const int64_t* idx_ptr = reinterpret_cast<const int64_t*>(index);
+void embedding(std::byte* out, const std::byte* index, const std::byte* weight, 
+               llaisysDataType_t dtype, size_t num_indices, size_t weight_dim) {
+    const int64_t* idx = reinterpret_cast<const int64_t*>(index);
 
     switch (dtype) {
     case LLAISYS_DTYPE_F32:
-        embedding_impl<float>(reinterpret_cast<float*>(out), idx_ptr, reinterpret_cast<const float*>(weight), num_indices, weight_dim);
+        embedding_impl<float>(reinterpret_cast<float*>(out), idx, 
+                              reinterpret_cast<const float*>(weight), num_indices, weight_dim);
         break;
     case LLAISYS_DTYPE_F16:
-        embedding_impl<fp16_t>(reinterpret_cast<fp16_t*>(out), idx_ptr, reinterpret_cast<const fp16_t*>(weight), num_indices, weight_dim);
+        embedding_impl<fp16_t>(reinterpret_cast<fp16_t*>(out), idx, 
+                               reinterpret_cast<const fp16_t*>(weight), num_indices, weight_dim);
         break;
     case LLAISYS_DTYPE_BF16:
-        embedding_impl<bf16_t>(reinterpret_cast<bf16_t*>(out), idx_ptr, reinterpret_cast<const bf16_t*>(weight), num_indices, weight_dim);
+        embedding_impl<bf16_t>(reinterpret_cast<bf16_t*>(out), idx, 
+                                reinterpret_cast<const bf16_t*>(weight), num_indices, weight_dim);
         break;
     default:
         break;
